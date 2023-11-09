@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  api:
+    image: ghcr.io/fyargat/countries_api:latest
+    depends_on:
+      - db
+    environment:
+      - NODE_ENV=production
+      - TZ="Europe/Samara"
+    env_file:
+      - '.env'
+
+  db:
+    image: postgres:latest
+    env_file:
+      - '.env'
+    volumes:
+      - db:/var/lib/postgresql/data:z
+
+volumes:
+  db:
+
+networks:
+  default:
+    name: portfolio_network
+    external: true
