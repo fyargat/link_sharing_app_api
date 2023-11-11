@@ -15,6 +15,10 @@ export class ProfileDto {
   @ApiProperty({ example: 'Doe' })
   @IsString()
   lastName: string;
+
+  @ApiProperty({ example: 'test@test.test' })
+  @IsString()
+  email: string;
 }
 
 export class PatchProfileDto {
@@ -22,11 +26,11 @@ export class PatchProfileDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  firstName?: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  lastName?: string;
 }

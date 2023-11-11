@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 
-import { PatchProfileDto } from './dto';
+import { PatchProfileDto, ProfileDto } from './dto';
 
 @Injectable()
 export class ProfileService {
@@ -14,22 +14,45 @@ export class ProfileService {
     return profile;
   }
 
-  async getProfileInfo(ownerId: number) {
+  async getProfileInfo(ownerId: number): Promise<ProfileDto> {
     const profile = await this.databaseService.profile.findUniqueOrThrow({
       where: { ownerId },
     });
+    const user = await this.databaseService.user.findUnique({
+      where: { id: ownerId },
+      select: {
+        email: true,
+      },
+    });
 
-    return profile;
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return { ...profile, email: user?.email };
   }
 
-  async patchProfileInfo(ownerId: number, patch: PatchProfileDto) {
+  async patchProfileInfo(
+    ownerId: number,
+    patch: PatchProfileDto,
+  ): Promise<ProfileDto> {
     const profile = await this.databaseService.profile.update({
       where: { ownerId },
       data: {
         ...patch,
       },
     });
+    const user = await this.databaseService.user.findUnique({
+      where: { id: ownerId },
+      select: {
+        email: true,
+      },
+    });
 
-    return profile;
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return { ...profile, email: user.email };
   }
 }
