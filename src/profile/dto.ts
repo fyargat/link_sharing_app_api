@@ -33,4 +33,10 @@ export class PatchProfileDto {
   @IsNotEmpty()
   @IsString()
   lastName?: string;
+
+  @ApiProperty({ example: 'avatar-url' })
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  avatar?: string;
 }

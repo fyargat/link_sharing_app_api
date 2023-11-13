@@ -9,7 +9,7 @@ export class ProfileService {
 
   async create(ownerId: number) {
     const profile = await this.databaseService.profile.create({
-      data: { ownerId, firstName: '', lastName: '' },
+      data: { ownerId, firstName: '', lastName: '', avatar: '' },
     });
     return profile;
   }
