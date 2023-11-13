@@ -1,18 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { OrderService } from 'src/order/order.service';
 
 import { CreateSharingLinkBodyDto, UpdateSharingLinkBodyDto } from './dto';
 
 @Injectable()
 export class LinkService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private orderService: OrderService,
+  ) {}
 
   async getList(ownerId: number) {
     const links = await this.databaseService.sharingLink.findMany({
       where: { ownerId },
     });
 
-    return links;
+    return { data: links };
   }
 
   async create(ownerId: number, body: CreateSharingLinkBodyDto) {
@@ -22,6 +26,7 @@ export class LinkService {
         ...body,
       },
     });
+    await this.orderService.push(ownerId, link.id);
 
     return link;
   }
@@ -43,6 +48,7 @@ export class LinkService {
     const link = await this.databaseService.sharingLink.delete({
       where: { id, ownerId },
     });
+    await this.orderService.removeItem(ownerId, id);
 
     return link;
   }

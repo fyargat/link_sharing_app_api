@@ -18,6 +18,7 @@ model User {
 
   profile Profile?
   links SharingLink[]
+  order Order?
 }
 
 model Profile {
@@ -35,6 +36,14 @@ model SharingLink {
   platformId Int
 
   ownerId Int
+  owner User @relation(fields: [ownerId], references: [id])
+}
+
+model Order {
+  id Int @id @default(autoincrement())
+  order Int[]
+
+  ownerId Int @unique
   owner User @relation(fields: [ownerId], references: [id])
 }
 

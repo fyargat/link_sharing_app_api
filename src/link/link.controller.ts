@@ -64,8 +64,6 @@ export class LinkController {
     @SessionInfo()
     session: GetSessionInfoDto,
   ) {
-    console.log('params', id);
-
     const response = await this.linkService.removeLink(id, session.id);
     return response;
   }

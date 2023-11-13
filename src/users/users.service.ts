@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { OrderService } from 'src/order/order.service';
 import { ProfileService } from 'src/profile/profile.service';
 
 @Injectable()
@@ -7,6 +8,7 @@ export class UsersService {
   constructor(
     private databaseService: DatabaseService,
     private profileService: ProfileService,
+    private orderService: OrderService,
   ) {}
 
   findByEmail(email: string) {
@@ -22,6 +24,7 @@ export class UsersService {
       },
     });
     await this.profileService.create(user.id);
+    await this.orderService.createOrder(user.id);
 
     return user;
   }
