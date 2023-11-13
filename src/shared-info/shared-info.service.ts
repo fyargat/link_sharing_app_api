@@ -12,11 +12,7 @@ export class SharedInfoService {
   ) {}
 
   async getSharedInfo(id: number) {
-    console.log('id', id);
-
     const profile = await this.profileService.getProfileInfo(id);
-
-    console.log('profile', profile);
 
     if (!profile) {
       throw new NotFoundException();
