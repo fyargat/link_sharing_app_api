@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 
 import { PatchProfileDto, ProfileDto } from './dto';
+import { DEFAULT_AVATAR } from './profile.config';
 
 @Injectable()
 export class ProfileService {
@@ -9,7 +10,7 @@ export class ProfileService {
 
   async create(ownerId: number) {
     const profile = await this.databaseService.profile.create({
-      data: { ownerId, firstName: '', lastName: '', avatar: '' },
+      data: { ownerId, firstName: '', lastName: '', avatar: DEFAULT_AVATAR },
     });
     return profile;
   }
