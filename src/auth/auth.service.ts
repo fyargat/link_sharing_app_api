@@ -20,7 +20,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (user) {
-      throw new BadRequestException({ type: 'user exists' });
+      throw new BadRequestException('User already exists');
     }
 
     const salt = this.passwordService.getSalt();
@@ -40,13 +40,17 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        'Login failed. An account with the specified login was not found. Please check the accuracy of the data',
+      );
     }
 
     const hash = this.passwordService.getHash(password, user.salt);
 
     if (hash !== user.hash) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        'Login failed. Password does not match the specified one. Make sure you entered the correct password.',
+      );
     }
 
     const accessToken = await this.jwtService.signAsync({
