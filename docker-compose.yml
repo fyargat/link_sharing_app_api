@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    image: link-sharing-app-api9:latest
+    image: ghcr.io/fyargat/link-sharing-app-api:latest
     depends_on:
       - db
     environment:
