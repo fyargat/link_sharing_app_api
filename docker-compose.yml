@@ -25,7 +25,8 @@ services:
 
 volumes:
   db:
-# networks:
-#   default:
-#     name: portfolio_network
-#     external: true
+
+networks:
+  default:
+    name: portfolio_network
+    external: true
