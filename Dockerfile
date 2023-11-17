@@ -19,7 +19,7 @@ FROM base As development
 COPY --chown=node:node package.json ./
 COPY --chown=node:node pnpm-lock.yaml ./
 RUN pnpm -v
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --chown=node:node . .
 USER node
 
@@ -36,7 +36,7 @@ COPY --chown=node:node prisma prisma
 RUN npx prisma generate
 RUN pnpm run build
 ENV NODE_ENV production
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --ignore-scripts --frozen-lockfile
 USER node
 
 ###################
