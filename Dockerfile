@@ -1,75 +1,52 @@
 ###################
-# BUILD FOR LOCAL DEVELOPMENT
+# BASE
 ###################
 
-FROM node:20-alpine As development
+FROM node:lts-slim as base
+RUN apt-get update -y
+RUN apt-get install -y openssl
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+WORKDIR /app
 
-# Create app directory
-WORKDIR /usr/src/app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
+###################
+# DEVELOPMENT
+###################
+
+FROM base As development
 COPY --chown=node:node package.json ./
-
-COPY --chown=node:node yarn.lock ./
-
-RUN apk add git
-
-RUN yarn 
-
-# Bundle app source
+COPY --chown=node:node pnpm-lock.yaml ./
+RUN pnpm -v
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --ignore-scripts --frozen-lockfile
 COPY --chown=node:node . .
-
-# Use the node user from the image (instead of the root user)
 USER node
 
 ###################
-# BUILD FOR PRODUCTION
+# BUILD
 ###################
 
-FROM node:20-alpine As build
-
-WORKDIR /usr/src/app
-
+FROM base As build
 COPY --chown=node:node package.json ./
-
-COPY --chown=node:node yarn.lock ./
-
-# RUN yarn 
-
-# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-
+COPY --chown=node:node pnpm-lock.yaml ./
+COPY --chown=node:node --from=development /app/node_modules ./node_modules
 COPY --chown=node:node . .
-
 COPY --chown=node:node prisma prisma
-
 RUN npx prisma generate
-
-# Run the build command which creates the production bundle
-RUN yarn build
-
-# Set NODE_ENV environment variable
+RUN pnpm run build
 ENV NODE_ENV production
-
-RUN apk add git
-
-# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
-RUN yarn install --production && yarn cache clean --all
-
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 USER node
 
 ###################
 # PRODUCTION
 ###################
 
-FROM node:20-alpine As production
-
-# Copy the bundled code from the build stage to the production image
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --chown=node:node --from=build  /usr/src/app/prisma ./prisma
-
-# Start the server using the production build
-CMD [ "node", "dist/src/main.js" ]
+FROM base As production
+COPY --chown=node:node --from=build /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/dist ./dist
+COPY --chown=node:node --from=build  /app/prisma ./prisma
+COPY --chown=node:node --from=build /app/migrate-and-start.sh .
+CMD [ "node", "dist/main.js" ]
+# CMD ["./migrate-and-start.sh"]

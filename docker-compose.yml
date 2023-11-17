@@ -2,12 +2,15 @@ version: '3.8'
 
 services:
   api:
-    image: ghcr.io/fyargat/countries_api:latest
+    image: link-sharing-app-api9:latest
     depends_on:
       - db
     environment:
       - NODE_ENV=production
-      - TZ="Europe/Samara"
+    ports:
+      - target: 3000
+        published: 3000
+        mode: host
     env_file:
       - '.env'
 
@@ -17,11 +20,12 @@ services:
       - '.env'
     volumes:
       - db:/var/lib/postgresql/data:z
+    ports:
+      - 5432:5432
 
 volumes:
   db:
-
-networks:
-  default:
-    name: portfolio_network
-    external: true
+# networks:
+#   default:
+#     name: portfolio_network
+#     external: true
