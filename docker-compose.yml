@@ -10,7 +10,7 @@ services:
     deploy:
       placement:
         constraints:
-          - 'node.role=worker'
+          - 'node.role==worker'
     ports:
       - target: 3000
         published: 3000
