@@ -7,6 +7,10 @@ services:
       - db
     environment:
       - NODE_ENV=production
+    deploy:
+      placement:
+        constraints:
+          - 'node.role=worker'
     ports:
       - target: 3000
         published: 3000
@@ -20,8 +24,14 @@ services:
       - '.env'
     volumes:
       - db:/var/lib/postgresql/data:z
+    deploy:
+      placement:
+        constraints:
+          - 'node.role=worker'
     ports:
-      - 5432:5432
+      - target: 5432
+        published: 5432
+        mode: host
 
 volumes:
   db:
