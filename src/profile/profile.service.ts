@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import console from 'console';
 import { DatabaseService } from 'src/database/database.service';
 
 import { PatchProfileDto, ProfileDto } from './dto';
@@ -16,8 +15,7 @@ export class ProfileService {
     return profile;
   }
 
-  async getProfileInfo(ownerId: number) {
-    // : Promise<ProfileDto>
+  async getProfileInfo(ownerId: number): Promise<ProfileDto> {
     const profile = await this.databaseService.profile.findUniqueOrThrow({
       where: { ownerId },
     });
@@ -27,14 +25,12 @@ export class ProfileService {
         email: true,
       },
     });
-    const users = await this.databaseService.user.findMany();
-    console.log('users', users);
 
     if (!user) {
       throw new NotFoundException();
     }
 
-    return { ...profile, email: user?.email, users };
+    return { ...profile, email: user?.email };
   }
 
   async patchProfileInfo(
