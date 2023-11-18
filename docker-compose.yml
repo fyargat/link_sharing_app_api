@@ -6,7 +6,7 @@ services:
     depends_on:
       - db
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
     deploy:
       placement:
         constraints:
@@ -27,7 +27,7 @@ services:
     deploy:
       placement:
         constraints:
-          - 'node.role=worker'
+          - 'node.role==worker'
     ports:
       - target: 5432
         published: 5432
@@ -35,8 +35,7 @@ services:
 
 volumes:
   db:
-
-networks:
-  default:
-    name: portfolio_network
-    external: true
+# networks:
+#   default:
+#     name: portfolio_network
+#     external: true
