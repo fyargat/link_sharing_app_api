@@ -11,10 +11,6 @@ services:
       placement:
         constraints:
           - 'node.role==worker'
-    ports:
-      - target: 3000
-        published: 3000
-        mode: host
     env_file:
       - '.env'
 
@@ -28,14 +24,11 @@ services:
       placement:
         constraints:
           - 'node.role==worker'
-    ports:
-      - target: 5432
-        published: 5432
-        mode: host
 
 volumes:
   db:
-# networks:
-#   default:
-#     name: portfolio_network
-#     external: true
+
+networks:
+  default:
+    name: portfolio_network
+    external: true
