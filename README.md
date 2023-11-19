@@ -1,1 +1,1 @@
-# Link Sharing App Client
+# Link Sharing App API
