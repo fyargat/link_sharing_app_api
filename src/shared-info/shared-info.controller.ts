@@ -22,8 +22,6 @@ export class SharedInfoController {
     )
     id: number,
   ) {
-    console.log('id', id);
-
     return this.sharedInfoService.getSharedInfo(id);
   }
 }
