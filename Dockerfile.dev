@@ -1,17 +1,26 @@
-FROM node:latest
+###################
+# BASE
+###################
 
+FROM node:lts-slim as base
+RUN apt-get update -y
+RUN apt-get install -y openssl
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 WORKDIR /app
 
-COPY package.json .
 
-COPY yarn.lock .
+###################
+# DEVELOPMENT
+###################
 
-RUN yarn
-
+FROM base As development
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+RUN pnpm install 
 COPY . .
-
 EXPOSE 3000   
 
-CMD ["yarn", "start:dev"]
-
+CMD ["pnpm", "start:dev"]
 

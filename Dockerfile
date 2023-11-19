@@ -18,7 +18,6 @@ WORKDIR /app
 FROM base As development
 COPY --chown=node:node package.json ./
 COPY --chown=node:node pnpm-lock.yaml ./
-RUN pnpm -v
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --chown=node:node . .
 USER node
@@ -47,6 +46,4 @@ FROM base As production
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/dist ./dist
 COPY --chown=node:node --from=build  /app/prisma ./prisma
-COPY --chown=node:node --from=build /app/migrate-and-start.sh .
 CMD [ "node", "dist/main.js" ]
-# CMD ["./migrate-and-start.sh"]

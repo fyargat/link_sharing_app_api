@@ -1,36 +1,25 @@
 version: '3.8'
 
 services:
-  # api:
-  #   image: countries_api:latest
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - target: 3000
-  #       published: 3000
-  #       mode: host
-  #   command:
-  #     - /bin/sh
-  #     - -c
-  #     - |
-  #       npx prisma db push
-  #       npx prisma db seed
-  #       yarn start:dev
-
-  #   environment:
-  #     - NODE_ENV=development
-  #     - TZ="Europe/Samara"
-  #   env_file:
-  #     - '.env'
-  #   volumes:
-  #     - ./:/app
-  #     - ./node_modules:/app/node_modules
+  api:
+    image: link-sharing-app_api:latest
+    depends_on:
+      - db
+    ports:
+      - target: 3000
+        published: 3000
+        mode: host
+    environment:
+      - NODE_ENV=development
+      - TZ="Europe/Samara"
+    env_file:
+      - '.env'
+    volumes:
+      - ./:/app
+      - ./node_modules:/app/node_modules
 
   db:
     image: postgres:latest
-    # environment:
-    # - POSTGRES_USER=postgres
-    # - POSTGRES_PASSWORD=postgres123
     env_file:
       - ./.env
     ports:
